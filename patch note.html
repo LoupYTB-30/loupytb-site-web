@@ -1,1 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patch Notes — LoupYTB_</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:24px;margin-bottom:6px;color:#fff}
+.subtitle{text-align:center;font-size:14px;color:#8b949e;margin-bottom:24px}
+.lang-btn{position:fixed;top:16px;right:16px;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #30363d;background:#161b22;color:#e6edf3;z-index:999}
+.lang-btn:hover{background:#21262d}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #30363d;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;font-size:14px;cursor:pointer;border:none;background:none;color:#8b949e;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.tab:hover:not(.active){color:#e6edf3}
+.badge-new{display:inline-block;background:#238636;color:#fff;border-radius:20px;padding:1px 8px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle}
+input,select,textarea{font-family:Arial,sans-serif;background:#161b22;border:1px solid #30363d;border-radius:6px;color:#e6edf3;padding:8px 12px;width:100%;font-size:14px;margin-bottom:10px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#58a6ff}
+textarea{resize:vertical;min-height:70px}
+label{font-size:13px;color:#8b949e;display:block;margin-bottom:4px}
+.btn{padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #30363d;background:#21262d;color:#e6edf3}
+.btn:hover{background:#30363d}
+.btn.primary{background:#238636;border-color:#2ea043;color:#fff}
+.btn.primary:hover{background:#2ea043}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn.danger{border-color:#da3633;color:#f85149;background:none}
+.btn.danger:hover{background:#3d1c1c}
+.btn.purple{background:#2d1b69;border-color:#4c1d95;color:#a78bfa}
+.btn.purple:hover{background:#3b2282}
+.btn.discord-btn{background:#5865f2;border-color:#4752c4;color:#fff;font-weight:600}
+.btn.discord-btn:hover{background:#4752c4}
+.section-title{font-size:11px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;font-weight:600}
+.empty{text-align:center;padding:40px;color:#8b949e;font-size:14px}
+.loading{text-align:center;padding:30px;color:#8b949e;font-size:13px}
+.error{color:#f85149;font-size:13px;display:none;margin-top:4px}
+.notif{border-radius:6px;padding:10px 14px;font-size:13px;display:none;margin-bottom:12px}
+.notif.show{display:block}
+.notif.success{background:#0f2d1a;border:1px solid #238636;color:#3fb950}
+/* PATCH NOTE CARD */
+.pn-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:20px;margin-bottom:16px;position:relative}
+.pn-card:hover{border-color:#444d56}
+.pn-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.pn-version{font-size:18px;font-weight:700;color:#fff}
+.pn-date{font-size:12px;color:#8b949e;margin-top:3px}
+.pn-author{font-size:12px;color:#8b949e}
+.pn-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.pn-actions{display:flex;gap:6px}
+.pn-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pn-col{background:#0d1117;border-radius:8px;padding:12px}
+.pn-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pn-col-title.done{color:#3fb950}
+.pn-col-title.todo{color:#58a6ff}
+.pn-col-title.modify{color:#d29922}
+.pn-col-title.remove{color:#f85149}
+.pn-item{font-size:13px;color:#c9d1d9;padding:5px 0;border-bottom:1px solid #21262d;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.pn-item:last-child{border-bottom:none}
+.pn-item::before{flex-shrink:0;margin-top:1px}
+.pn-col.done .pn-item::before{content:"✅"}
+.pn-col.todo .pn-item::before{content:"📋"}
+.pn-col.modify .pn-item::before{content:"✏️"}
+.pn-col.remove .pn-item::before{content:"🗑️"}
+.pn-empty-col{font-size:12px;color:#8b949e;font-style:italic}
+.last-update-bar{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px}
+.last-update-bar .dot{width:8px;height:8px;border-radius:50%;background:#3fb950;flex-shrink:0}
+.last-update-bar strong{color:#fff}
+/* ADMIN FORM */
+.admin-bar{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px}
+.admin-badge{background:#5a3e1b;color:#d29922;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+.form-section{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:18px;margin-bottom:16px}
+.form-section h3{font-size:14px;font-weight:600;margin-bottom:14px;color:#e6edf3}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.col-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.col-input-box{background:#0d1117;border-radius:8px;padding:12px}
+.col-input-box label{margin-bottom:6px}
+.col-input-box label.done-lbl{color:#3fb950}
+.col-input-box label.todo-lbl{color:#58a6ff}
+.col-input-box label.modify-lbl{color:#d29922}
+.col-input-box label.remove-lbl{color:#f85149}
+@media(max-width:600px){.pn-body{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}.col-inputs{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
 
+<button class="lang-btn" id="lang-toggle" onclick="toggleLang()">🇬🇧 English</button>
+
+<h1>📋 LoupYTB_ — Patch Notes</h1>
+<p class="subtitle" id="txt-subtitle">Suivi des mises à jour du site et du serveur Discord</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('site')">🌐 <span id="tab-site-txt">Site Web</span></button>
+  <button class="tab" onclick="switchTab('discord')">💬 <span id="tab-discord-txt">Serveur Discord</span></button>
+  <button class="tab" onclick="switchTab('admin')">🔒 Admin</button>
+</div>
+
+<!-- ONGLET SITE -->
+<div id="tab-site">
+  <div id="last-update-site" style="display:none" class="last-update-bar">
+    <div class="dot"></div>
+    <span id="last-update-site-txt"></span>
+  </div>
+  <div id="pn-list-site"><div class="loading">⏳ Chargement...</div></div>
+</div>
+
+<!-- ONGLET DISCORD -->
+<div id="tab-discord" style="display:none">
+  <div id="last-update-discord" style="display:none" class="last-update-bar">
+    <div class="dot"></div>
+    <span id="last-update-discord-txt"></span>
+  </div>
+  <div id="pn-list-discord"><div class="loading">⏳ Chargement...</div></div>
+</div>
+
+<!-- ONGLET ADMIN -->
+<div id="tab-admin" style="display:none">
+  <div id="admin-login" style="max-width:320px">
+    <label id="lbl-admin-name">Ton pseudo (staff)</label>
+    <input type="text" id="admin-name" placeholder="ex: LoupYTB_">
+    <label id="lbl-admin-pwd">Mot de passe admin</label>
+    <input type="password" id="admin-pwd" placeholder="Mot de passe...">
+    <button class="btn primary" onclick="checkAdmin()" id="btn-admin-login">🔓 Connexion</button>
+    <div class="error" id="pwd-error">Mot de passe incorrect ou pseudo manquant.</div>
+  </div>
+
+  <div id="admin-panel" style="display:none">
+    <div class="admin-bar">
+      <span>🛡️</span>
+      <span id="admin-mode-txt">Mode admin activé —</span>
+      <span id="admin-name-display" style="color:#a78bfa;font-weight:600"></span>
+      <span class="admin-badge">STAFF</span>
+      <button class="btn sm danger" style="margin-left:auto" onclick="logoutAdmin()" id="btn-logout">Déconnexion</button>
+    </div>
+
+    <div class="notif success" id="notif-saved"></div>
+
+    <!-- FORMULAIRE AJOUT -->
+    <div class="form-section">
+      <h3 id="form-title">➕ Nouveau patch note</h3>
+      <div class="form-row">
+        <div>
+          <label id="lbl-category">Catégorie</label>
+          <select id="f-cat">
+            <option value="site">🌐 Site Web</option>
+            <option value="discord">💬 Serveur Discord</option>
+          </select>
+        </div>
+        <div>
+          <label id="lbl-version">Version / Titre</label>
+          <input type="text" id="f-version" placeholder="ex: v1.2 ou Mise à jour de juin">
+        </div>
+      </div>
+      <label id="lbl-description">Description (optionnel)</label>
+      <textarea id="f-desc" placeholder="Brève description de cette mise à jour..."></textarea>
+      <div class="col-inputs">
+        <div class="col-input-box">
+          <label class="done-lbl" id="lbl-done">✅ Ce qui a été fait</label>
+          <textarea id="f-done" placeholder="Une entrée par ligne..."></textarea>
+        </div>
+        <div class="col-input-box">
+          <label class="todo-lbl" id="lbl-todo">📋 À faire</label>
+          <textarea id="f-todo" placeholder="Une entrée par ligne..."></textarea>
+        </div>
+        <div class="col-input-box">
+          <label class="modify-lbl" id="lbl-modify">✏️ À modifier</label>
+          <textarea id="f-modify" placeholder="Une entrée par ligne..."></textarea>
+        </div>
+        <div class="col-input-box">
+          <label class="remove-lbl" id="lbl-remove">🗑️ À supprimer</label>
+          <textarea id="f-remove" placeholder="Une entrée par ligne..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn primary" onclick="savePatchNote()" id="btn-save">💾 Publier le patch note</button>
+        <button class="btn discord-btn" onclick="publishToDiscord()" id="btn-discord">🚀 Publier sur Discord</button>
+        <button class="btn" onclick="resetForm()" id="btn-reset">🔄 Réinitialiser</button>
+      </div>
+      <div class="error" id="form-error">Remplis au moins la version.</div>
+    </div>
+
+    <!-- LISTE ADMIN -->
+    <div class="form-section">
+      <h3 id="admin-list-title">📋 Gérer les patch notes</h3>
+      <div id="admin-pn-list"><div class="loading">⏳ Chargement...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "LoupYTB_";
+const WH_PATCHNOTE = "";
+
+const APPS_SCRIPT_PATCHNOTE = "https://script.google.com/macros/s/AKfycbwnaGtZSh4GDRiTPvCpToYMb-942OrbQD9LdfsIA8fQ0L__6sU2aZdi5l3jkDEbCSNkqA/exec";
+
+function buildDiscordPayload(version, cat, desc, done, todo, modify, remove, isEdit){
+  const catLabel = cat==="site" ? "🌐 Site Web" : "💬 Serveur Discord";
+  const fields = [];
+  if(done) fields.push({name:"✅ Ce qui a été fait",value:done.split("\n").filter(l=>l.trim()).map(l=>"• "+l.trim()).join("\n"),inline:false});
+  if(todo) fields.push({name:"📋 À faire",value:todo.split("\n").filter(l=>l.trim()).map(l=>"• "+l.trim()).join("\n"),inline:false});
+  if(modify) fields.push({name:"✏️ À modifier",value:modify.split("\n").filter(l=>l.trim()).map(l=>"• "+l.trim()).join("\n"),inline:false});
+  if(remove) fields.push({name:"🗑️ À supprimer",value:remove.split("\n").filter(l=>l.trim()).map(l=>"• "+l.trim()).join("\n"),inline:false});
+  return {
+    content: isEdit ? "📝 Patch note mis à jour !" : "<@&1519783787892834456> — 📋 Nouveau patch note disponible !",
+    embeds:[{
+      title: "📋 Patch Note — " + version,
+      description: (desc?desc+"\n\n":"")+("**Catégorie :** "+catLabel),
+      color: cat==="site" ? 3447003 : 5793266,
+      fields,
+      footer:{text:"NoxStudio Patch Notes • "+(isEdit?"Modifié":"Publié")+" par "+adminPseudo+" • "+formatNow()},
+      timestamp: new Date().toISOString()
+    }]
+  };
+}
+
+async function publishToDiscord(){
+  const version = document.getElementById("f-version").value.trim();
+  const err = document.getElementById("form-error");
+  if(!version){err.style.display="block";return;}
+  err.style.display="none";
+
+  const patchId = editingId || ("pn-"+Date.now());
+  const cat = document.getElementById("f-cat").value;
+  const desc = document.getElementById("f-desc").value.trim();
+  const done = document.getElementById("f-done").value.trim();
+  const todo = document.getElementById("f-todo").value.trim();
+  const modify = document.getElementById("f-modify").value.trim();
+  const remove = document.getElementById("f-remove").value.trim();
+
+  const btn = document.getElementById("btn-discord");
+  btn.textContent = "⏳ Envoi...";
+  btn.disabled = true;
+
+  try {
+    // 1. Cherche si un message Discord existe déjà (via GET pour éviter CORS)
+    const checkUrl = APPS_SCRIPT_PATCHNOTE + "?action=getMessageId&patchId=" + encodeURIComponent(patchId);
+    const checkRes = await fetch(checkUrl);
+    const checkData = await checkRes.json();
+    const existingMsgId = checkData.messageId;
+
+    const payload = buildDiscordPayload(version, cat, desc, done, todo, modify, remove, !!existingMsgId);
+
+    let r;
+    if(existingMsgId){
+      // Modifie le message existant via PATCH webhook
+      r = await fetch(`${WH_PATCHNOTE}/messages/${existingMsgId}`, {
+        method:"PATCH",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({embeds: payload.embeds})
+      });
+    } else {
+      // Envoie un nouveau message et récupère l'ID
+      r = await fetch(WH_PATCHNOTE + "?wait=true", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+      if(r.ok){
+        const msgData = await r.json();
+        const newMsgId = msgData.id;
+        // Sauvegarde l'ID dans Google Sheets via GET
+        const saveUrl = APPS_SCRIPT_PATCHNOTE
+          + "?action=saveMessageId"
+          + "&patchId=" + encodeURIComponent(patchId)
+          + "&messageId=" + encodeURIComponent(newMsgId);
+        await fetch(saveUrl);
+      }
+    }
+
+    if(r && r.ok){
+      btn.textContent = existingMsgId ? "✅ Message modifié !" : "✅ Publié sur Discord !";
+      btn.style.background = "#238636";
+      setTimeout(()=>{
+        btn.textContent = "🚀 Publier sur Discord";
+        btn.style.background = "";
+        btn.disabled = false;
+      }, 3000);
+    } else {
+      btn.textContent = "❌ Erreur — réessaie";
+      btn.disabled = false;
+    }
+  } catch(e) {
+    console.error(e);
+    btn.textContent = "❌ Erreur — réessaie";
+    btn.disabled = false;
+  }
+}
+let lang = "fr";
+let patchnotes = [];
+let editingId = null;
+let adminPseudo = "";
+let currentTab = "site";
+
+// ===== DONNÉES (stockage localStorage) =====
+function saveData(){localStorage.setItem("kwo_patchnotes", JSON.stringify(patchnotes));}
+function loadData(){
+  const d = localStorage.getItem("kwo_patchnotes");
+  if(d) patchnotes = JSON.parse(d);
+  else patchnotes = [
+    {id:"pn-001",cat:"site",version:"v1.0",desc:"Lancement du site web LoupYTB_",author:"LoupYTB_",date:formatNow(),
+     done:"Page d'accueil\nPage Billet\nPage Recrutement",todo:"Page Gallery\nPage Patch Note",modify:"",remove:""},
+    {id:"pn-002",cat:"discord",version:"v2.0",desc:"Refonte du serveur Discord",author:"LoupYTB_",date:formatNow(),
+     done:"Nouveaux salons staff\nSystème de tickets",todo:"Bot de modération",modify:"Catégorie Support",remove:"Anciens salons inutiles"}
+  ];
+  saveData();
+}
+
+function formatNow(){
+  return new Date().toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+
+function getLastUpdate(cat){
+  const list = patchnotes.filter(p=>p.cat===cat);
+  if(!list.length) return null;
+  return list[0];
+}
+
+// ===== TABS =====
+function switchTab(t){
+  currentTab = t;
+  ["site","discord","admin"].forEach(k=>document.getElementById("tab-"+k).style.display=k===t?"block":"none");
+  document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("active",["site","discord","admin"][i]===t));
+  if(t==="site")renderPatchNotes("site");
+  if(t==="discord")renderPatchNotes("discord");
+  if(t==="admin"&&document.getElementById("admin-panel").style.display!=="none")renderAdminList();
+}
+
+// ===== RENDU =====
+function parseLinesHTML(text){
+  if(!text||!text.trim()) return "";
+  return text.split("\n").filter(l=>l.trim()).map(l=>'<div class="pn-item"><span>'+l.trim()+'</span></div>').join("");
+}
+
+function renderPatchNotes(cat){
+  const list = patchnotes.filter(p=>p.cat===cat);
+  const el = document.getElementById("pn-list-"+cat);
+  const lastBar = document.getElementById("last-update-"+cat);
+  const lastTxt = document.getElementById("last-update-"+cat+"-txt");
+  const T = translations[lang];
+
+  if(list.length){
+    lastBar.style.display="flex";
+    lastTxt.innerHTML = T.last_update.replace("{version}","<strong>"+list[0].version+"</strong>").replace("{date}","<strong>"+list[0].date+"</strong>").replace("{author}","<strong>"+list[0].author+"</strong>");
+  } else {
+    lastBar.style.display="none";
+  }
+
+  if(!list.length){el.innerHTML='<div class="empty">'+T.no_patchnote+'</div>';return;}
+
+  el.innerHTML = list.map((p,i)=>`
+    <div class="pn-card">
+      <div class="pn-header">
+        <div>
+          <div class="pn-version">${p.version}${i===0?'<span class="badge-new">'+T.badge_new+'</span>':''}</div>
+          <div class="pn-date">📅 ${p.date}</div>
+          <div class="pn-author">👤 ${p.author}</div>
+          ${p.desc?'<div style="font-size:13px;color:#8b949e;margin-top:6px">'+p.desc+'</div>':""}
+        </div>
+      </div>
+      <div class="pn-body">
+        <div class="pn-col done">
+          <div class="pn-col-title done">✅ ${T.col_done}</div>
+          ${parseLinesHTML(p.done)||'<div class="pn-empty-col">'+T.col_empty+'</div>'}
+        </div>
+        <div class="pn-col todo">
+          <div class="pn-col-title todo">📋 ${T.col_todo}</div>
+          ${parseLinesHTML(p.todo)||'<div class="pn-empty-col">'+T.col_empty+'</div>'}
+        </div>
+        <div class="pn-col modify">
+          <div class="pn-col-title modify">✏️ ${T.col_modify}</div>
+          ${parseLinesHTML(p.modify)||'<div class="pn-empty-col">'+T.col_empty+'</div>'}
+        </div>
+        <div class="pn-col remove">
+          <div class="pn-col-title remove">🗑️ ${T.col_remove}</div>
+          ${parseLinesHTML(p.remove)||'<div class="pn-empty-col">'+T.col_empty+'</div>'}
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+function renderAdminList(){
+  const el = document.getElementById("admin-pn-list");
+  const T = translations[lang];
+  if(!patchnotes.length){el.innerHTML='<div class="empty">'+T.no_patchnote+'</div>';return;}
+  el.innerHTML = patchnotes.map(p=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0d1117;border-radius:8px;margin-bottom:8px;gap:8px;flex-wrap:wrap">
+      <div>
+        <span style="font-size:13px;font-weight:600">${p.version}</span>
+        <span style="font-size:11px;color:#8b949e;margin-left:8px">${p.cat==="site"?"🌐":"💬"} ${p.cat==="site"?(lang==="fr"?"Site Web":"Website"):(lang==="fr"?"Serveur Discord":"Discord Server")}</span>
+        <span style="font-size:11px;color:#8b949e;margin-left:8px">📅 ${p.date}</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm purple" onclick="editPatchNote('${p.id}')">${T.btn_edit}</button>
+        <button class="btn sm danger" onclick="deletePatchNote('${p.id}')">${T.btn_delete}</button>
+      </div>
+    </div>`).join("");
+}
+
+// ===== ADMIN =====
+function checkAdmin(){
+  const pwd = document.getElementById("admin-pwd").value;
+  const name = document.getElementById("admin-name").value.trim();
+  if(pwd===ADMIN_PASSWORD&&name){
+    adminPseudo = name;
+    document.getElementById("admin-login").style.display="none";
+    document.getElementById("admin-panel").style.display="block";
+    document.getElementById("pwd-error").style.display="none";
+    document.getElementById("admin-name-display").textContent=name;
+    renderAdminList();
+  } else {
+    document.getElementById("pwd-error").style.display="block";
+  }
+}
+
+function logoutAdmin(){
+  adminPseudo="";
+  document.getElementById("admin-login").style.display="block";
+  document.getElementById("admin-panel").style.display="none";
+  document.getElementById("admin-pwd").value="";
+  document.getElementById("admin-name").value="";
+  editingId=null;
+}
+
+function savePatchNote(){
+  const version = document.getElementById("f-version").value.trim();
+  const err = document.getElementById("form-error");
+  if(!version){err.style.display="block";return;}
+  err.style.display="none";
+  const p = {
+    id: editingId||"pn-"+Date.now(),
+    cat: document.getElementById("f-cat").value,
+    version,
+    desc: document.getElementById("f-desc").value.trim(),
+    author: adminPseudo,
+    date: formatNow(),
+    done: document.getElementById("f-done").value.trim(),
+    todo: document.getElementById("f-todo").value.trim(),
+    modify: document.getElementById("f-modify").value.trim(),
+    remove: document.getElementById("f-remove").value.trim()
+  };
+  if(editingId){
+    const idx = patchnotes.findIndex(x=>x.id===editingId);
+    if(idx>-1) patchnotes[idx]=p;
+    editingId=null;
+  } else {
+    patchnotes.unshift(p);
+  }
+  saveData();
+  resetForm();
+  renderAdminList();
+  const T=translations[lang];
+  const n=document.getElementById("notif-saved");
+  n.textContent=T.notif_saved;
+  n.classList.add("show");
+  setTimeout(()=>n.classList.remove("show"),3000);
+  document.getElementById("btn-save").textContent="💾 "+T.btn_publish;
+}
+
+function editPatchNote(id){
+  const p = patchnotes.find(x=>x.id===id);
+  if(!p) return;
+  editingId = id;
+  document.getElementById("f-cat").value = p.cat;
+  document.getElementById("f-version").value = p.version;
+  document.getElementById("f-desc").value = p.desc||"";
+  document.getElementById("f-done").value = p.done||"";
+  document.getElementById("f-todo").value = p.todo||"";
+  document.getElementById("f-modify").value = p.modify||"";
+  document.getElementById("f-remove").value = p.remove||"";
+  const T=translations[lang];
+  document.getElementById("form-title").textContent="✏️ "+T.form_edit_title;
+  document.getElementById("btn-save").textContent="💾 "+T.btn_update;
+  document.querySelector(".form-section").scrollIntoView({behavior:"smooth"});
+}
+
+function deletePatchNote(id){
+  patchnotes = patchnotes.filter(x=>x.id!==id);
+  saveData();
+  renderAdminList();
+  if(currentTab==="site"||currentTab==="discord") renderPatchNotes(currentTab);
+}
+
+function resetForm(){
+  editingId=null;
+  document.getElementById("f-version").value="";
+  document.getElementById("f-desc").value="";
+  document.getElementById("f-done").value="";
+  document.getElementById("f-todo").value="";
+  document.getElementById("f-modify").value="";
+  document.getElementById("f-remove").value="";
+  const T=translations[lang];
+  document.getElementById("form-title").textContent="➕ "+T.form_new_title;
+  document.getElementById("btn-save").textContent="💾 "+T.btn_publish;
+}
+
+// ===== TRADUCTION =====
+const translations={
+  fr:{
+    subtitle:"Suivi des mises à jour du site et du serveur Discord",
+    tab_site:"Site Web",tab_discord:"Serveur Discord",
+    col_done:"Ce qui a été fait",col_todo:"À faire",col_modify:"À modifier",col_remove:"À supprimer",
+    col_empty:"Rien pour l'instant",badge_new:"NOUVEAU",
+    no_patchnote:"Aucun patch note pour l'instant.",
+    last_update:"Dernière mise à jour : {version} — le {date} par {author}",
+    lbl_category:"Catégorie",lbl_version:"Version / Titre",lbl_desc:"Description (optionnel)",
+    lbl_done:"✅ Ce qui a été fait",lbl_todo:"📋 À faire",lbl_modify:"✏️ À modifier",lbl_remove:"🗑️ À supprimer",
+    ph_version:"ex: v1.2 ou Mise à jour de juin",ph_desc:"Brève description de cette mise à jour...",
+    ph_lines:"Une entrée par ligne...",
+    form_new_title:"Nouveau patch note",form_edit_title:"Modifier le patch note",
+    btn_publish:"Publier le patch note",btn_update:"Mettre à jour",btn_reset:"Réinitialiser",
+    btn_edit:"✏️ Modifier",btn_delete:"🗑 Supprimer",
+    admin_mode:"Mode admin activé —",admin_logout:"Déconnexion",
+    lbl_admin_name:"Ton pseudo (staff)",lbl_admin_pwd:"Mot de passe admin",
+    ph_admin_name:"ex: LoupYTB_",ph_admin_pwd:"Mot de passe...",
+    btn_login:"🔓 Connexion",pwd_error:"Mot de passe incorrect ou pseudo manquant.",
+    admin_list_title:"Gérer les patch notes",
+    notif_saved:"✅ Patch note publié avec succès !"
+  },
+  en:{
+    subtitle:"Tracking updates for the website and Discord server",
+    tab_site:"Website",tab_discord:"Discord Server",
+    col_done:"What's done",col_todo:"To do",col_modify:"To modify",col_remove:"To remove",
+    col_empty:"Nothing yet",badge_new:"NEW",
+    no_patchnote:"No patch notes yet.",
+    last_update:"Last update: {version} — on {date} by {author}",
+    lbl_category:"Category",lbl_version:"Version / Title",lbl_desc:"Description (optional)",
+    lbl_done:"✅ What's done",lbl_todo:"📋 To do",lbl_modify:"✏️ To modify",lbl_remove:"🗑️ To remove",
+    ph_version:"e.g. v1.2 or June update",ph_desc:"Brief description of this update...",
+    ph_lines:"One entry per line...",
+    form_new_title:"New patch note",form_edit_title:"Edit patch note",
+    btn_publish:"Publish patch note",btn_update:"Update",btn_reset:"Reset",
+    btn_edit:"✏️ Edit",btn_delete:"🗑 Delete",
+    admin_mode:"Admin mode active —",admin_logout:"Logout",
+    lbl_admin_name:"Your username (staff)",lbl_admin_pwd:"Admin password",
+    ph_admin_name:"e.g. LoupYTB_",ph_admin_pwd:"Password...",
+    btn_login:"🔓 Login",pwd_error:"Wrong password or missing username.",
+    admin_list_title:"Manage patch notes",
+    notif_saved:"✅ Patch note published successfully!"
+  }
+};
+
+function applyLang(){
+  const T=translations[lang];
+  document.getElementById("txt-subtitle").textContent=T.subtitle;
+  document.getElementById("tab-site-txt").textContent=T.tab_site;
+  document.getElementById("tab-discord-txt").textContent=T.tab_discord;
+  document.getElementById("lbl-category").textContent=T.lbl_category;
+  document.getElementById("lbl-version").textContent=T.lbl_version;
+  document.getElementById("lbl-description").textContent=T.lbl_desc;
+  document.getElementById("lbl-done").textContent=T.lbl_done;
+  document.getElementById("lbl-todo").textContent=T.lbl_todo;
+  document.getElementById("lbl-modify").textContent=T.lbl_modify;
+  document.getElementById("lbl-remove").textContent=T.lbl_remove;
+  document.getElementById("f-version").placeholder=T.ph_version;
+  document.getElementById("f-desc").placeholder=T.ph_desc;
+  document.getElementById("f-done").placeholder=T.ph_lines;
+  document.getElementById("f-todo").placeholder=T.ph_lines;
+  document.getElementById("f-modify").placeholder=T.ph_lines;
+  document.getElementById("f-remove").placeholder=T.ph_lines;
+  document.getElementById("btn-save").textContent="💾 "+(editingId?T.btn_update:T.btn_publish);
+  document.getElementById("btn-reset").textContent="🔄 "+T.btn_reset;
+  document.getElementById("form-title").textContent=(editingId?"✏️ ":"➕ ")+(editingId?T.form_edit_title:T.form_new_title);
+  document.getElementById("lbl-admin-name").textContent=T.lbl_admin_name;
+  document.getElementById("lbl-admin-pwd").textContent=T.lbl_admin_pwd;
+  document.getElementById("admin-name").placeholder=T.ph_admin_name;
+  document.getElementById("admin-pwd").placeholder=T.ph_admin_pwd;
+  document.getElementById("btn-admin-login").textContent=T.btn_login;
+  document.getElementById("pwd-error").textContent=T.pwd_error;
+  document.getElementById("admin-mode-txt").textContent=T.admin_mode;
+  document.getElementById("btn-logout").textContent=T.admin_logout;
+  document.getElementById("admin-list-title").textContent="📋 "+T.admin_list_title;
+  if(document.getElementById("f-cat").options[0]) document.getElementById("f-cat").options[0].textContent="🌐 "+T.tab_site;
+  if(document.getElementById("f-cat").options[1]) document.getElementById("f-cat").options[1].textContent="💬 "+T.tab_discord;
+  renderPatchNotes("site");
+  renderPatchNotes("discord");
+  if(document.getElementById("admin-panel").style.display!=="none") renderAdminList();
+}
+
+function toggleLang(){
+  lang=lang==="fr"?"en":"fr";
+  document.getElementById("lang-toggle").textContent=lang==="fr"?"🇬🇧 English":"🇫🇷 Français";
+  applyLang();
+}
+
+document.getElementById("admin-pwd").addEventListener("keydown",e=>{if(e.key==="Enter")checkAdmin();});
+loadData();
+renderPatchNotes("site");
+</script>
+</body>
+</html>
