@@ -1,1 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support LoupYTB_ — Tickets</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:22px;margin-bottom:8px;color:#fff}
+.subtitle{text-align:center;font-size:14px;color:#8b949e;margin-bottom:24px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #30363d;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;font-size:14px;cursor:pointer;border:none;background:none;color:#8b949e;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.tab:hover:not(.active){color:#e6edf3}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:11px;background:#da3633;color:#fff;margin-left:5px}
+input,select,textarea{font-family:Arial,sans-serif;background:#161b22;border:1px solid #30363d;border-radius:6px;color:#e6edf3;padding:8px 12px;width:100%;font-size:14px;margin-bottom:10px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#58a6ff}
+textarea{resize:vertical;min-height:80px}
+label{font-size:13px;color:#8b949e;display:block;margin-bottom:4px}
+.hint{font-size:12px;color:#8b949e;margin-top:-6px;margin-bottom:10px;line-height:1.5}
+.btn{padding:9px 18px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #30363d;background:#21262d;color:#e6edf3}
+.btn:hover{background:#30363d}
+.btn.primary{background:#238636;border-color:#2ea043;color:#fff}
+.btn.primary:hover{background:#2ea043}
+.btn.sm{padding:5px 12px;font-size:12px}
+.btn.danger{border-color:#da3633;color:#f85149;background:none}
+.btn.danger:hover{background:#3d1c1c}
+.ticket-list{display:flex;flex-direction:column;gap:8px}
+.ticket{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 16px;cursor:pointer}
+.ticket:hover,.ticket.selected{border-color:#58a6ff}
+.ticket-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ticket-id{font-size:11px;color:#8b949e;font-family:monospace}
+.ticket-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.ticket-meta{font-size:12px;color:#8b949e}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.open{background:#0d419d;color:#58a6ff}
+.in_progress{background:#5a3e1b;color:#d29922}
+.closed{background:#0f2d1a;color:#3fb950}
+.prio-high{background:#490202;color:#f85149}
+.prio-med{background:#5a3e1b;color:#d29922}
+.prio-low{background:#21262d;color:#8b949e}
+.assigned{background:#2d1b69;color:#a78bfa;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.detail{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.detail-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.detail-body{font-size:14px;color:#8b949e;line-height:1.6;margin:12px 0}
+.section-title{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filter-btn{padding:4px 12px;border:1px solid #30363d;border-radius:20px;font-size:12px;cursor:pointer;background:#161b22;color:#8b949e}
+.filter-btn.active{background:#0d2d6b;border-color:#58a6ff;color:#58a6ff}
+.empty{text-align:center;padding:30px;color:#8b949e;font-size:14px}
+.notif{border-radius:6px;padding:10px 14px;font-size:13px;display:none;margin-bottom:12px}
+.notif.show{display:block}
+.notif.success{background:#0f2d1a;border:1px solid #238636;color:#3fb950}
+.error{color:#f85149;font-size:13px;display:none;margin-top:4px}
+.loading{text-align:center;padding:20px;color:#8b949e;font-size:13px}
+.admin-bar{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px}
+.admin-badge{background:#5a3e1b;color:#d29922;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+.reply-box{background:#0d2d6b22;border:1px solid #1f3a6e;border-radius:8px;padding:12px;margin-top:12px}
+.reply-box .reply-label{font-size:11px;color:#58a6ff;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.reply-box .reply-text{font-size:14px;color:#e6edf3;line-height:1.6}
+.reply-input-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;margin-top:12px}
+.reply-input-box label{font-size:12px;color:#58a6ff;font-weight:600;margin-bottom:6px}
+.search-box{display:flex;gap:8px;margin-bottom:16px;max-width:400px}
+.search-box input{margin:0}
+.guide-box{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.8;color:#8b949e}
+.guide-box strong{color:#e6edf3}
+.lang-btn{position:fixed;top:16px;right:16px;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #30363d;background:#161b22;color:#e6edf3;z-index:999}
+.lang-btn:hover{background:#21262d}
+@media(max-width:600px){.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<button class="lang-btn" id="lang-toggle" onclick="toggleLang()">🇬🇧 English</button>
+<h1>🎫 Support LoupYTB_ </h1>
+<p class="subtitle" id="txt-subtitle">Système de tickets — envoie ta demande, on te répond sur Discord</p>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('tickets')">Tickets <span class="badge" id="open-count">0</span></button>
+  <button class="tab" onclick="switchTab('new')">+ Nouveau ticket</button>
+  <button class="tab" onclick="switchTab('suivre')">🔍 Suivre mon ticket</button>
+  <button class="tab" onclick="switchTab('admin')">🔒 Admin</button>
+</div>
 
+<div id="tab-tickets">
+  <div class="notif success" id="notif-created"></div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',this)">Tous</button>
+    <button class="filter-btn" onclick="setFilter('open',this)">Ouverts</button>
+    <button class="filter-btn" onclick="setFilter('in_progress',this)">En cours</button>
+    <button class="filter-btn" onclick="setFilter('closed',this)">Fermés</button>
+  </div>
+  <div class="layout">
+    <div>
+      <div class="section-title">Liste</div>
+      <div class="ticket-list" id="ticket-list"><div class="loading">⏳ Chargement...</div></div>
+    </div>
+    <div>
+      <div class="section-title">Détail</div>
+      <div id="ticket-detail"><div class="empty">Sélectionne un ticket</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-new" style="display:none">
+  <div style="max-width:500px">
+    <div class="guide-box">
+      📋 <strong>Comment trouver ton ID Discord ?</strong><br>
+      1. Dans Discord → <strong>Paramètres → Avancé → Active le Mode développeur</strong><br>
+      2. Clic droit sur ton avatar → <strong>Copier l'identifiant</strong><br>
+      L'ID ressemble à : <strong>123456789012345678</strong>
+    </div>
+    <label>Tag Discord (pseudo)</label>
+    <input type="text" id="t-discord" placeholder="ex: LoupYTB_">
+    <label>ID Discord</label>
+    <input type="text" id="t-discordid" placeholder="ex: 123456789012345678">
+    <div class="hint">⚠️ Requis pour recevoir une vraie notification Discord</div>
+    <label>Catégorie</label>
+    <select id="t-cat">
+      <option>Support général</option>
+      <option>Bug / Problème</option>
+      <option>Demande de partenariat</option>
+      <option>Sanction / Appel</option>
+      <option>Autre</option>
+    </select>
+    <label>Sujet</label>
+    <input type="text" id="t-subject" placeholder="Résume ton problème">
+    <label>Priorité</label>
+    <select id="t-prio"><option>Faible</option><option selected>Moyenne</option><option>Haute</option></select>
+    <label>Description</label>
+    <textarea id="t-msg" placeholder="Explique en détail..."></textarea>
+    <button class="btn primary" onclick="createTicket()">📨 Envoyer le ticket</button>
+    <div class="error" id="form-error">Remplis tous les champs.</div>
+  </div>
+</div>
+
+<div id="tab-suivre" style="display:none">
+  <div style="max-width:500px">
+    <p style="font-size:14px;color:#8b949e;margin-bottom:14px">Entre ton ID de ticket pour voir son statut et la réponse de l'équipe.</p>
+    <div class="search-box">
+      <input type="text" id="search-id" placeholder="Ex: TKT-123456">
+      <button class="btn primary" onclick="searchTicket()">Rechercher</button>
+    </div>
+    <div id="search-result"></div>
+  </div>
+</div>
+
+<div id="tab-admin" style="display:none">
+  <div id="admin-login" style="max-width:300px">
+    <label>Ton pseudo (staff)</label>
+    <input type="text" id="admin-name" placeholder="ex: LoupYTB_">
+    <label>Mot de passe admin</label>
+    <input type="password" id="admin-pwd" placeholder="Mot de passe...">
+    <button class="btn primary" onclick="checkAdmin()">🔓 Connexion</button>
+    <div class="error" id="pwd-error">Mot de passe incorrect ou pseudo manquant.</div>
+  </div>
+  <div id="admin-panel" style="display:none">
+    <div class="admin-bar">
+      <span>🛡️</span>
+      <span>Mode admin activé —</span>
+      <span id="admin-name-display" style="color:#a78bfa;font-weight:600"></span>
+      <span class="admin-badge">STAFF</span>
+      <button class="btn sm danger" style="margin-left:auto" onclick="logoutAdmin()">Déconnexion</button>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="setAdminFilter('all',this)">Tous</button>
+      <button class="filter-btn" onclick="setAdminFilter('open',this)">Ouverts</button>
+      <button class="filter-btn" onclick="setAdminFilter('in_progress',this)">En cours</button>
+      <button class="filter-btn" onclick="setAdminFilter('closed',this)">Fermés</button>
+    </div>
+    <div class="layout">
+      <div>
+        <div class="section-title">Liste</div>
+        <div class="ticket-list" id="admin-ticket-list"></div>
+      </div>
+      <div>
+        <div class="section-title">Gestion</div>
+        <div id="admin-ticket-detail"><div class="empty">Sélectionne un ticket</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WH="";
+const WH_REPLY="";
+const GS="https://script.google.com/macros/s/AKfycbxiPMARYb6jw1zrsPtt4lJDnl9wfoBfhdrmlvzdqPxl3iP7mkE_1t8xtkgBQ98083OW-g/exec";
+const ADMIN_PASSWORD="LoupYTB_";
+let tickets=[],filter="all",adminFilter="all",selectedId=null,adminSelectedId=null,isAdmin=false,adminPseudo="";
+
+function formatDate(d){
+  if(!d)return"";
+  if(String(d).includes("T")){const dt=new Date(d);return dt.toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});}
+  return String(d);
+}
+
+async function loadTickets(){
+  try{
+    const r=await fetch(GS);
+    const data=await r.json();
+    tickets=data.filter(row=>row[0]).map(row=>({
+      id:row[0],date:formatDate(row[1]),name:row[2]||"",cat:row[3],
+      subject:row[4],prio:row[5],msg:row[6],status:row[7]||"open",
+      reply:row[8]||"",discord:row[9]||"",discordid:row[10]||"",
+      assignee:row[11]||""
+    })).reverse();
+    renderList();
+    if(isAdmin)renderAdminList();
+  }catch(e){
+    document.getElementById("ticket-list").innerHTML='<div class="empty">Aucun ticket pour l\'instant.</div>';
+  }
+}
+
+function switchTab(t){
+  ["tickets","new","suivre","admin"].forEach(k=>document.getElementById("tab-"+k).style.display=k===t?"block":"none");
+  document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("active",["tickets","new","suivre","admin"][i]===t));
+  if(t==="tickets")loadTickets();
+}
+
+function setFilter(f,el){filter=f;document.querySelectorAll("#tab-tickets .filter-btn").forEach(b=>b.classList.remove("active"));el.classList.add("active");renderList();}
+function setAdminFilter(f,el){adminFilter=f;document.querySelectorAll("#admin-panel .filter-btn").forEach(b=>b.classList.remove("active"));el.classList.add("active");renderAdminList();}
+function statusLabel(s){return{open:"Ouvert",in_progress:"En cours",closed:"Fermé"}[s]||s}
+function statusIcon(s){return{open:"🔵",in_progress:"🟡",closed:"🟢"}[s]||""}
+function prioClass(p){return{Haute:"prio-high",Moyenne:"prio-med",Faible:"prio-low"}[p]||"prio-low"}
+
+function ticketCard(t,sel,fn){
+  return '<div class="ticket'+(sel===t.id?" selected":"")+'" onclick="'+fn+'(\''+t.id+'\')">'
+    +'<div class="ticket-header"><span class="ticket-id">'+t.id+'</span><span class="pill '+t.status+'">'+statusLabel(t.status)+'</span></div>'
+    +'<div class="ticket-title">'+t.subject+'</div>'
+    +'<div class="ticket-meta" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">@'+t.discord+' · '+t.cat+' · <span class="pill '+prioClass(t.prio)+'">'+t.prio+'</span>'
+    +(t.assignee?'<span class="assigned">👤 '+t.assignee+'</span>':'')
+    +'</div></div>';
+}
+
+function ticketDetailHTML(t){
+  return '<div class="detail">'
+    +'<div class="ticket-id" style="margin-bottom:6px">'+t.id+' · '+t.date+'</div>'
+    +'<div class="detail-title">'+t.subject+'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center">'
+    +'<span class="pill '+t.status+'">'+statusLabel(t.status)+'</span>'
+    +'<span class="pill '+prioClass(t.prio)+'">'+t.prio+'</span>'
+    +'<span style="font-size:12px;color:#8b949e">'+t.cat+'</span>'
+    +(t.assignee?'<span class="assigned">👤 '+t.assignee+'</span>':'')
+    +'</div>'
+    +'<div style="font-size:12px;color:#5865f2;margin-bottom:8px">@'+t.discord+'</div>'
+    +'<div class="detail-body">'+t.msg+'</div>'
+    +(t.reply
+      ?'<div class="reply-box"><div class="reply-label">💬 Réponse de l\'équipe</div><div class="reply-text">'+t.reply+'</div></div>'
+      :'<div style="font-size:12px;color:#8b949e;margin-top:10px;font-style:italic">En attente de réponse de l\'équipe...</div>')
+    +'</div>';
+}
+
+function renderList(){
+  const list=tickets.filter(t=>filter==="all"||t.status===filter);
+  document.getElementById("open-count").textContent=tickets.filter(t=>t.status==="open").length;
+  const el=document.getElementById("ticket-list");
+  if(!list.length){el.innerHTML='<div class="empty">Aucun ticket.</div>';return;}
+  el.innerHTML=list.map(t=>ticketCard(t,selectedId,"selectTicket")).join("");
+}
+
+function renderAdminList(){
+  const list=tickets.filter(t=>adminFilter==="all"||t.status===adminFilter);
+  const el=document.getElementById("admin-ticket-list");
+  if(!list.length){el.innerHTML='<div class="empty">Aucun ticket.</div>';return;}
+  el.innerHTML=list.map(t=>ticketCard(t,adminSelectedId,"selectAdminTicket")).join("");
+}
+
+function selectTicket(id){
+  selectedId=id;renderList();
+  document.getElementById("ticket-detail").innerHTML=ticketDetailHTML(tickets.find(x=>x.id===id));
+}
+
+function selectAdminTicket(id){
+  adminSelectedId=id;
+  const t=tickets.find(x=>x.id===id);
+  renderAdminList();
+  document.getElementById("admin-ticket-detail").innerHTML='<div class="detail">'
+    +'<div class="ticket-id" style="margin-bottom:6px">'+t.id+' · '+t.date+'</div>'
+    +'<div class="detail-title">'+t.subject+'</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;align-items:center">'
+    +'<span class="pill '+t.status+'">'+statusLabel(t.status)+'</span>'
+    +'<span class="pill '+prioClass(t.prio)+'">'+t.prio+'</span>'
+    +'<span style="font-size:12px;color:#8b949e">'+t.cat+'</span>'
+    +(t.assignee?'<span class="assigned">👤 '+t.assignee+'</span>':'')
+    +'</div>'
+    +'<div style="font-size:12px;color:#5865f2;margin-bottom:4px">@'+t.discord+'</div>'
+    +(t.discordid?'<div style="font-size:11px;color:#8b949e;margin-bottom:8px;font-family:monospace">ID: '+t.discordid+'</div>':'')
+    +'<div class="detail-body">'+t.msg+'</div>'
+    +(t.reply?'<div class="reply-box"><div class="reply-label">💬 Réponse actuelle</div><div class="reply-text">'+t.reply+'</div></div>':'')
+    +'<div class="reply-input-box">'
+    +'<label>👤 Assigné à</label>'
+    +'<input id="admin-assignee" type="text" value="'+(t.assignee||adminPseudo)+'" placeholder="Pseudo du staff qui prend en charge" style="margin-bottom:8px">'
+    +'<label>🔄 Statut</label>'
+    +'<select id="admin-status-sel" style="margin-bottom:8px">'
+    +'<option value="open"'+(t.status==="open"?" selected":"")+'>🔵 Ouvert</option>'
+    +'<option value="in_progress"'+(t.status==="in_progress"?" selected":"")+'>🟡 En cours</option>'
+    +'<option value="closed"'+(t.status==="closed"?" selected":"")+'>🟢 Fermé</option>'
+    +'</select>'
+    +'<label>✏️ Réponse</label>'
+    +'<textarea id="admin-reply-txt" placeholder="Écris ta réponse ici...">'+t.reply+'</textarea>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px">'
+    +'<button class="btn sm primary" onclick="saveReply(\''+id+'\')">💾 Enregistrer + Notifier</button>'
+    +'<button class="btn sm danger" onclick="deleteTicket(\''+id+'\')">🗑 Supprimer</button>'
+    +'</div></div></div>';
+}
+
+function saveReply(id){
+  const t=tickets.find(x=>x.id===id);
+  const newReply=document.getElementById("admin-reply-txt").value;
+  const newStatus=document.getElementById("admin-status-sel").value;
+  const newAssignee=document.getElementById("admin-assignee").value;
+  const oldStatus=t.status;
+  t.reply=newReply;t.status=newStatus;t.assignee=newAssignee;
+  fetch(GS,{method:"POST",body:JSON.stringify({action:"reply",id:id,reply:newReply})});
+  fetch(GS,{method:"POST",body:JSON.stringify({action:"update",id:id,status:newStatus})});
+  fetch(GS,{method:"POST",body:JSON.stringify({action:"assign",id:id,assignee:newAssignee})});
+  if(newReply)notifyReply(t,newReply);
+  if(newStatus!==oldStatus)notifyStatus(t,oldStatus,newStatus);
+  renderAdminList();selectAdminTicket(id);
+}
+
+async function notifyReply(t,reply){
+  const mention=t.discordid?"<@"+t.discordid+">":"@"+t.discord;
+  const payload={
+    content:mention+" — 💬 L'équipe a répondu à ton ticket !",
+    embeds:[{
+      title:"💬 Réponse à ton ticket — "+t.id,
+      color:3447003,
+      fields:[
+        {name:"Sujet",value:t.subject},
+        {name:"Réponse de l'équipe",value:reply},
+        {name:"Statut",value:statusIcon(t.status)+" "+statusLabel(t.status),inline:true},
+        {name:"Pris en charge par",value:"👤 "+(t.assignee||"Équipe LoupYTB_"),inline:true}
+      ],
+      footer:{text:"Support LoupYTB_ — onglet 🔍 Suivre mon ticket avec l'ID "+t.id}
+    }]
+  };
+  try{await fetch(WH_REPLY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});}
+  catch(e){console.error(e);}
+}
+
+async function notifyStatus(t,oldStatus,newStatus){
+  const mention=t.discordid?"<@"+t.discordid+">":"@"+t.discord;
+  const colors={open:3447003,in_progress:16776960,closed:3066993};
+  const payload={
+    content:mention+" — 🔔 Le statut de ton ticket a changé !",
+    embeds:[{
+      title:"🔔 Mise à jour du ticket — "+t.id,
+      color:colors[newStatus]||3447003,
+      fields:[
+        {name:"Sujet",value:t.subject},
+        {name:"Ancien statut",value:statusIcon(oldStatus)+" "+statusLabel(oldStatus),inline:true},
+        {name:"Nouveau statut",value:statusIcon(newStatus)+" "+statusLabel(newStatus),inline:true},
+        {name:"Pris en charge par",value:"👤 "+(t.assignee||"Équipe NexoStudio"),inline:true}
+      ],
+      footer:{text:"Support LoupYTB_ — onglet 🔍 Suivre mon ticket avec l'ID "+t.id}
+    }]
+  };
+  try{await fetch(WH_REPLY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});}
+  catch(e){console.error(e);}
+}
+
+function deleteTicket(id){
+  fetch(GS,{method:"POST",body:JSON.stringify({action:"delete",id:id})});
+  tickets=tickets.filter(x=>x.id!==id);
+  adminSelectedId=null;selectedId=null;
+  document.getElementById("admin-ticket-detail").innerHTML='<div class="empty">Sélectionne un ticket</div>';
+  document.getElementById("ticket-detail").innerHTML='<div class="empty">Sélectionne un ticket</div>';
+  renderAdminList();renderList();
+}
+
+function searchTicket(){
+  const sid=document.getElementById("search-id").value.trim().toUpperCase();
+  const t=tickets.find(x=>x.id===sid);
+  const el=document.getElementById("search-result");
+  if(!t){el.innerHTML='<div style="color:#f85149;font-size:14px;margin-top:10px">❌ Ticket introuvable.</div>';return;}
+  el.innerHTML=ticketDetailHTML(t);
+}
+
+function checkAdmin(){
+  const pwd=document.getElementById("admin-pwd").value;
+  const name=document.getElementById("admin-name").value.trim();
+  if(pwd===ADMIN_PASSWORD&&name){
+    isAdmin=true;adminPseudo=name;
+    document.getElementById("admin-login").style.display="none";
+    document.getElementById("admin-panel").style.display="block";
+    document.getElementById("pwd-error").style.display="none";
+    document.getElementById("admin-name-display").textContent=name;
+    loadTickets();
+  }else{document.getElementById("pwd-error").style.display="block";}
+}
+
+function logoutAdmin(){
+  isAdmin=false;adminPseudo="";
+  document.getElementById("admin-login").style.display="block";
+  document.getElementById("admin-panel").style.display="none";
+  document.getElementById("admin-pwd").value="";
+  document.getElementById("admin-name").value="";
+}
+
+function createTicket(){
+  const discord=document.getElementById("t-discord").value.trim();
+  const discordid=document.getElementById("t-discordid").value.trim();
+  const subject=document.getElementById("t-subject").value.trim();
+  const msg=document.getElementById("t-msg").value.trim();
+  const cat=document.getElementById("t-cat").value;
+  const prio=document.getElementById("t-prio").value;
+  const err=document.getElementById("form-error");
+  if(!discord||!discordid||!subject||!msg){err.style.display="block";return;}
+  err.style.display="none";
+  const id="TKT-"+String(Date.now()).slice(-6);
+  const now=new Date().toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const t={id,name:"",discord,discordid,cat,subject,msg,prio,status:"open",date:now,reply:"",assignee:""};
+  tickets.unshift(t);renderList();
+  saveToSheets(t);sendToDiscord(t);
+  document.getElementById("t-discord").value="";
+  document.getElementById("t-discordid").value="";
+  document.getElementById("t-subject").value="";
+  document.getElementById("t-msg").value="";
+  switchTab("tickets");
+  const n=document.getElementById("notif-created");
+  n.innerHTML="✅ Ticket créé ! Ton ID : <strong>"+id+"</strong> — note-le pour suivre ta demande dans l'onglet 🔍";
+  n.classList.add("show");
+  setTimeout(()=>n.classList.remove("show"),10000);
+}
+
+async function saveToSheets(t){
+  try{await fetch(GS,{method:"POST",body:JSON.stringify({action:"add",id:t.id,date:t.date,name:t.name,cat:t.cat,subject:t.subject,prio:t.prio,msg:t.msg,status:t.status,discord:t.discord,discordid:t.discordid,assignee:""})});}
+  catch(e){console.error(e);}
+}
+
+async function sendToDiscord(t){
+  const colors={Haute:15158332,Moyenne:16776960,Faible:3447003};
+  const payload={content:"<@&1496526102544515159> — 🎫 Nouveau ticket à traiter !",embeds:[{
+    title:"🎫 Nouveau ticket — "+t.id,
+    color:colors[t.prio]||3447003,
+    fields:[
+      {name:"Sujet",value:t.subject},
+      {name:"Discord",value:"@"+t.discord+" ("+t.discordid+")",inline:true},
+      {name:"Catégorie",value:t.cat,inline:true},
+      {name:"Priorité",value:t.prio,inline:true},
+      {name:"Message",value:t.msg}
+    ],
+    footer:{text:"Ticket Support LoupYTB_ · "+t.date}
+  }]};
+  try{await fetch(WH,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});}catch(e){}
+}
+
+document.getElementById("admin-pwd").addEventListener("keydown",e=>{if(e.key==="Enter")checkAdmin();});
+document.getElementById("search-id").addEventListener("keydown",e=>{if(e.key==="Enter")searchTicket();});
+
+// ===== SYSTÈME DE TRADUCTION =====
+let lang="fr";
+const translations={
+  fr:{
+    subtitle:"Système de tickets — envoie ta demande, on te répond sur Discord",
+    tab_tickets:"Tickets",tab_new:"+ Nouveau ticket",tab_suivre:"🔍 Suivre mon ticket",tab_admin:"🔒 Admin",
+    filter_all:"Tous",filter_open:"Ouverts",filter_progress:"En cours",filter_closed:"Fermés",
+    detail_empty:"Sélectionne un ticket",
+    form_discord_tag:"Tag Discord (pseudo)",form_discord_id:"ID Discord",
+    form_discord_hint:"⚠️ Requis pour recevoir une vraie notification Discord",
+    form_cat:"Catégorie",form_subject:"Sujet",form_prio:"Priorité",form_msg:"Description",
+    form_send:"📨 Envoyer le ticket",form_error:"Remplis tous les champs.",
+    form_prio_low:"Faible",form_prio_med:"Moyenne",form_prio_high:"Haute",
+    form_cat1:"Support général",form_cat2:"Bug / Problème",form_cat3:"Demande de partenariat",form_cat4:"Sanction / Appel",form_cat5:"Autre",
+    guide_title:"📋 Comment trouver ton ID Discord ?",
+    guide_step1:"1. Dans Discord → <strong>Paramètres → Avancé → Active le Mode développeur</strong>",
+    guide_step2:"2. Clic droit sur ton avatar → <strong>Copier l'identifiant</strong>",
+    guide_step3:"L'ID ressemble à : <strong>123456789012345678</strong>",
+    suivre_hint:"Entre ton ID de ticket pour voir son statut et la réponse de l'équipe.",
+    suivre_placeholder:"Ex: TKT-123456",suivre_btn:"Rechercher",suivre_notfound:"❌ Ticket introuvable.",
+    admin_name_label:"Ton pseudo (staff)",admin_name_ph:"ex: LoupYTB_",
+    admin_pwd_label:"Mot de passe admin",admin_pwd_ph:"Mot de passe...",
+    admin_login_btn:"🔓 Connexion",admin_pwd_error:"Mot de passe incorrect ou pseudo manquant.",
+    admin_mode:"Mode admin activé —",admin_badge:"STAFF",admin_logout:"Déconnexion",
+    admin_assignee:"👤 Assigné à",admin_status:"🔄 Statut",admin_reply_label:"✏️ Réponse",
+    admin_reply_ph:"Écris ta réponse ici...",admin_save:"💾 Enregistrer + Notifier",admin_delete:"🗑 Supprimer",
+    status_open:"🔵 Ouvert",status_progress:"🟡 En cours",status_closed:"🟢 Fermé",
+    waiting_reply:"En attente de réponse de l'équipe...",reply_current:"💬 Réponse actuelle",
+    reply_team:"💬 Réponse de l'équipe",assigned_by:"Pris en charge par",
+    notif_created:"✅ Ticket créé ! Ton ID : {id} — note-le pour suivre ta demande dans l'onglet 🔍",
+    loading:"⏳ Chargement...",no_ticket:"Aucun ticket.",
+    discord_tag_ph:"ex: LoupYTB_",discord_id_ph:"ex: 123456789012345678",
+    subject_ph:"Résume ton problème",msg_ph:"Explique en détail...",assignee_ph:"Pseudo du staff qui prend en charge"
+  },
+  en:{
+    subtitle:"Ticket system — send your request, we reply on Discord",
+    tab_tickets:"Tickets",tab_new:"+ New ticket",tab_suivre:"🔍 Track my ticket",tab_admin:"🔒 Admin",
+    filter_all:"All",filter_open:"Open",filter_progress:"In progress",filter_closed:"Closed",
+    detail_empty:"Select a ticket",
+    form_discord_tag:"Discord tag (username)",form_discord_id:"Discord ID",
+    form_discord_hint:"⚠️ Required to receive a real Discord notification",
+    form_cat:"Category",form_subject:"Subject",form_prio:"Priority",form_msg:"Description",
+    form_send:"📨 Send ticket",form_error:"Please fill in all fields.",
+    form_prio_low:"Low",form_prio_med:"Medium",form_prio_high:"High",
+    form_cat1:"General support",form_cat2:"Bug / Issue",form_cat3:"Partnership request",form_cat4:"Sanction / Appeal",form_cat5:"Other",
+    guide_title:"📋 How to find your Discord ID?",
+    guide_step1:"1. In Discord → <strong>Settings → Advanced → Enable Developer Mode</strong>",
+    guide_step2:"2. Right-click your avatar → <strong>Copy User ID</strong>",
+    guide_step3:"The ID looks like: <strong>123456789012345678</strong>",
+    suivre_hint:"Enter your ticket ID to see its status and the team's reply.",
+    suivre_placeholder:"Ex: TKT-123456",suivre_btn:"Search",suivre_notfound:"❌ Ticket not found.",
+    admin_name_label:"Your username (staff)",admin_name_ph:"ex: LoupYTB_",
+    admin_pwd_label:"Admin password",admin_pwd_ph:"Password...",
+    admin_login_btn:"🔓 Login",admin_pwd_error:"Wrong password or missing username.",
+    admin_mode:"Admin mode active —",admin_badge:"STAFF",admin_logout:"Logout",
+    admin_assignee:"👤 Assigned to",admin_status:"🔄 Status",admin_reply_label:"✏️ Reply",
+    admin_reply_ph:"Write your reply here...",admin_save:"💾 Save + Notify",admin_delete:"🗑 Delete",
+    status_open:"🔵 Open",status_progress:"🟡 In progress",status_closed:"🟢 Closed",
+    waiting_reply:"Waiting for the team's reply...",reply_current:"💬 Current reply",
+    reply_team:"💬 Team reply",assigned_by:"Handled by",
+    notif_created:"✅ Ticket created! Your ID: {id} — save it to track your request in the 🔍 tab",
+    loading:"⏳ Loading...",no_ticket:"No tickets.",
+    discord_tag_ph:"ex: LoupYTB_",discord_id_ph:"ex: 123456789012345678",
+    subject_ph:"Summarize your issue",msg_ph:"Explain in detail...",assignee_ph:"Staff username handling this ticket"
+  }
+};
+
+function t(key){return translations[lang][key]||key;}
+
+function toggleLang(){
+  lang=lang==="fr"?"en":"fr";
+  document.getElementById("lang-toggle").textContent=lang==="fr"?"🇬🇧 English":"🇫🇷 Français";
+  applyLang();
+  renderList();
+  if(isAdmin)renderAdminList();
+  if(selectedId)selectTicket(selectedId);
+  if(adminSelectedId)selectAdminTicket(adminSelectedId);
+}
+
+function applyLang(){
+  const T=translations[lang];
+  document.getElementById("txt-subtitle").textContent=T.subtitle;
+  const tabs=document.querySelectorAll(".tab");
+  if(tabs[0])tabs[0].innerHTML=T.tab_tickets+'<span class="badge" id="open-count">'+document.getElementById("open-count").textContent+'</span>';
+  if(tabs[1])tabs[1].textContent=T.tab_new;
+  if(tabs[2])tabs[2].textContent=T.tab_suivre;
+  if(tabs[3])tabs[3].textContent=T.tab_admin;
+  document.querySelectorAll("#tab-tickets .filter-btn").forEach((b,i)=>{
+    b.textContent=[T.filter_all,T.filter_open,T.filter_progress,T.filter_closed][i]||b.textContent;
+  });
+  const el=document.getElementById("ticket-detail");
+  if(el.querySelector(".empty"))el.innerHTML='<div class="empty">'+T.detail_empty+'</div>';
+  // formulaire
+  const fl=document.querySelectorAll("#tab-new label");
+  if(fl[0])fl[0].textContent=T.form_discord_tag;
+  if(fl[1])fl[1].textContent=T.form_discord_id;
+  if(fl[2])fl[2].textContent=T.form_cat;
+  if(fl[3])fl[3].textContent=T.form_subject;
+  if(fl[4])fl[4].textContent=T.form_prio;
+  if(fl[5])fl[5].textContent=T.form_msg;
+  const btn=document.querySelector("#tab-new .btn.primary");
+  if(btn)btn.textContent=T.form_send;
+  const hint=document.querySelector("#tab-new .hint");
+  if(hint)hint.textContent=T.form_discord_hint;
+  document.getElementById("t-discord").placeholder=T.discord_tag_ph;
+  document.getElementById("t-discordid").placeholder=T.discord_id_ph;
+  document.getElementById("t-subject").placeholder=T.subject_ph;
+  document.getElementById("t-msg").placeholder=T.msg_ph;
+  // guide
+  const gb=document.querySelector(".guide-box");
+  if(gb)gb.innerHTML='<strong>'+T.guide_title+'</strong><br>'+T.guide_step1+'<br>'+T.guide_step2+'<br>'+T.guide_step3;
+  // suivre
+  const sh=document.querySelector("#tab-suivre p");
+  if(sh)sh.textContent=T.suivre_hint;
+  document.getElementById("search-id").placeholder=T.suivre_placeholder;
+  const sb=document.querySelector("#tab-suivre .btn.primary");
+  if(sb)sb.textContent=T.suivre_btn;
+  // admin login
+  const al=document.querySelectorAll("#admin-login label");
+  if(al[0])al[0].textContent=T.admin_name_label;
+  if(al[1])al[1].textContent=T.admin_pwd_label;
+  document.getElementById("admin-name").placeholder=T.admin_name_ph;
+  document.getElementById("admin-pwd").placeholder=T.admin_pwd_ph;
+  const alb=document.querySelector("#admin-login .btn.primary");
+  if(alb)alb.textContent=T.admin_login_btn;
+}
+
+loadTickets();
+</script>
+</body>
+</html>
